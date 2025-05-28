@@ -1,43 +1,38 @@
+using System.Collections.ObjectModel;
+using System.Text.Json;
+using Barberia2.Models;
+
 namespace Barberia2;
 
 public partial class Cortes : ContentPage
 {
-	public Cortes()
+    public ObservableCollection<Cortes> ListaCortes { get; } = new();
+    public Cortes()
 	{
 		InitializeComponent();
-
-        var cortesEjemplo = new[]
-    {
-            new
-            {
-                Id = 1,
-                Nombre = "Corte Clásico",
-                Descripcion = "Estilo tradicional con tijera y máquina",
-                Imagen = "corte_clasico.png",
-                Precio = 25.99
-            },
-            new
-            {
-                Id = 2,
-                Nombre = "Fade Moderno",
-                Descripcion = "Degradado suave de largo a corto",
-                Imagen = "fade_moderno.png",
-                Precio = 30.50
-            },
-            new
-            {
-                Id = 3,
-                Nombre = "Undercut",
-                Descripcion = "Lados cortos con volumen arriba",
-                Imagen = "undercut.png",
-                Precio = 28.75
-            }
-        };
-
-        // Asignar como BindingContext
-        BindingContext = cortesEjemplo;
+        BindingContext = this;
+        CargarDatos();
     }
+    private async void CargarDatos()
+    {
+        try
+        {
+            var httpClient = new HttpClient();
+            var respuesta = await httpClient.GetStringAsync("https://barberiaapi.onrender.com/api/cortes");
 
+            var cortes = JsonSerializer.Deserialize<List<Cortes>>(respuesta);
+
+            ListaCortes.Clear();
+            foreach (var corte in cortes)
+            {
+                ListaCortes.Add(corte);
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", ex.Message, "OK");
+        }
+    }
     private async void DetalleCorte(object sender, EventArgs e)
     {
         var button = (ImageButton)sender;

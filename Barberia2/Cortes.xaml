@@ -5,7 +5,7 @@
              Title="Cortes">
     
         <ScrollView>
-        <CollectionView ItemsSource="{Binding}">
+        <CollectionView ItemsSource="{Binding ListaCortes}">
             <CollectionView.ItemsLayout>
                 <GridItemsLayout Orientation="Vertical"
                              Span="3" />
@@ -15,8 +15,8 @@
                 <DataTemplate>
                     <Frame Grid.Column="0" Padding="4"  Margin="10,0,10,0" WidthRequest="120" HeightRequest="120">
                         <Grid   RowDefinitions="*,*">
-                            <ImageButton Aspect="AspectFill" Source="{Binding Imagen}" Grid.Row="0" Clicked="DetalleCorte" CommandParameter="{Binding .}"></ImageButton>
-                            <Label Text="{Binding Nombre}" VerticalOptions="End" Grid.Row="1"></Label>
+                            <ImageButton Aspect="AspectFill" Source="{Binding imagen}" Grid.Row="0" Clicked="DetalleCorte" CommandParameter="{Binding Id}"></ImageButton>
+                            <Label Text="{Binding nombre}" VerticalOptions="End" Grid.Row="1"></Label>
                             
                         </Grid>
                     </Frame>
