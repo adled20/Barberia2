@@ -5,13 +5,11 @@
         public App()
         {
             InitializeComponent();
+
+            MainPage = new NavigationPage(new Products());
+            
         }
 
-        protected override Window CreateWindow(IActivationState? activationState)
-        {
-            
-            {
-            
-        }
+       
     }
 }
