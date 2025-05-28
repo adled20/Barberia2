@@ -13,6 +13,6 @@ public partial class Seleccion : ContentPage
     }
     private async void Productos(object sender, EventArgs e)
     {
-        await Navigation.PushAsync(new Productos());
+        await Navigation.PushAsync(new Products());
     }
 }
