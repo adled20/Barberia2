@@ -6,10 +6,11 @@ namespace Barberia2;
 
 public partial class Cortes : ContentPage
 {
-    public ObservableCollection<Cortes> ListaCortes { get; } = new();
+    public ObservableCollection<Peina> ListaCortes { get; } = new();
+
     public Cortes()
 	{
-		InitializeComponent();
+        InitializeComponent();
         BindingContext = this;
         CargarDatos();
     }
@@ -17,10 +18,10 @@ public partial class Cortes : ContentPage
     {
         try
         {
-            var httpClient = new HttpClient();
-            var respuesta = await httpClient.GetStringAsync("https://barberiaapi.onrender.com/api/cortes");
+            var client = new HttpClient();
+            var json = await client.GetStringAsync("https://barberiaapi.onrender.com/api/cortes");
 
-            var cortes = JsonSerializer.Deserialize<List<Cortes>>(respuesta);
+            var cortes = JsonSerializer.Deserialize<List<Peina>>(json);
 
             ListaCortes.Clear();
             foreach (var corte in cortes)
@@ -33,20 +34,23 @@ public partial class Cortes : ContentPage
             await DisplayAlert("Error", ex.Message, "OK");
         }
     }
-    private async void DetalleCorte(object sender, EventArgs e)
+    private async  void DetalleCorte(object sender, EventArgs e)
     {
-        var button = (ImageButton)sender;
-        var corteSeleccionado = ((ImageButton)sender).CommandParameter;
+        var boton = (ImageButton)sender;  // o Button, depende del control
 
+        // Obtén el CommandParameter como string y conviértelo con TryParse para evitar excepciones
+        if (int.TryParse(boton.CommandParameter?.ToString(), out int idcorte))
+        {
+            // Navega a la página detalle pasando el id
+            await Navigation.PushAsync(new DetalleCorte(idcorte));
+        }
+        else
+        {
+            await DisplayAlert("Error", "ID inválido o no asignado", "OK");
+        }
 
-        // 2. Crear la página destino
-        var paginaDestino = new DetalleCorte();
-
-        // 3. Pasar TODOS los datos como BindingContext
-        paginaDestino.BindingContext = corteSeleccionado;
-
-        // 4. Navegar
-        await Navigation.PushAsync(paginaDestino);
     }
+
 }
+
 

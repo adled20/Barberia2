@@ -14,9 +14,10 @@
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Frame Grid.Column="0" Padding="4"  Margin="10,0,10,0" WidthRequest="120" HeightRequest="120">
-                        <Grid   RowDefinitions="*,*">
-                            <ImageButton Aspect="AspectFill" Source="{Binding imagen}" Grid.Row="0" Clicked="DetalleCorte" CommandParameter="{Binding Id}"></ImageButton>
+                        <Grid   RowDefinitions="*,*, *">
+                            <ImageButton Aspect="AspectFill" Source="{Binding imagen}" Grid.Row="0" Clicked="DetalleCorte" CommandParameter="{Binding idcorte}"></ImageButton>
                             <Label Text="{Binding nombre}" VerticalOptions="End" Grid.Row="1"></Label>
+                            <Label Text="{Binding idcorte}" VerticalOptions="End" Grid.Row="2"></Label>
                             
                         </Grid>
                     </Frame>
