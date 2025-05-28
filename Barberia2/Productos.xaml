@@ -3,10 +3,24 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Barberia2.Productos"
              Title="Productos">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+   <ScrollView>
+        <CollectionView ItemsSource="{Binding}">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical"
+                             Span="3" />
+                <!-- 3 columnas -->
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Grid.Column="0" Padding="4"  Margin="10,0,10,0" WidthRequest="120" HeightRequest="120">
+                        <Grid   RowDefinitions="*,*">
+                            <ImageButton Aspect="AspectFill" Source="{Binding Imagen}" Grid.Row="0" Clicked="DetalleCorte" CommandParameter="{Binding .}"></ImageButton>
+                            <Label Text="{Binding Nombre}" VerticalOptions="End" Grid.Row="1"></Label>
+                            
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </ScrollView>
 </ContentPage>
