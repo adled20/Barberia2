@@ -6,6 +6,7 @@
 
     <ScrollView>
         <StackLayout Padding="20" Spacing="15">
+            <Button Text="ver Carrito" Clicked="VerCarritoCon"></Button>
             <!-- Campos superiores - Con x:Name para referencia -->
             <Grid ColumnDefinitions="*,*" RowSpacing="10" ColumnSpacing="20">
                 <!-- Columna izquierda -->
@@ -38,13 +39,16 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Grid ColumnDefinitions="Auto,*" Padding="10">
-                            <Image Source="{Binding Imagen}"
+                            <Image Source="{Binding imagen}"
                                    WidthRequest="60"
                                    HeightRequest="60"/>
 
                             <VerticalStackLayout Grid.Column="1" Padding="5,0">
-                                <Label Text="{Binding Nombre}" FontAttributes="Bold"/>
-                                <Label Text="{Binding Precio, StringFormat='Precio: ${0}'}"/>
+                                <Label Text="{Binding nombre}" FontAttributes="Bold"/>
+                                <Label Text="{Binding idProducto}" FontAttributes="Bold"/>
+                                <Label Text="{Binding precio, StringFormat='Precio: ${0}'}"/>
+                              
+                                <Button Text="Añadir al carrito" Clicked="AñadirCarrito" CommandParameter="{Binding idProducto}"></Button>
                             </VerticalStackLayout>
                         </Grid>
                     </DataTemplate>

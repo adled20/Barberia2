@@ -11,6 +11,6 @@ namespace Barberia2.Model
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
         public string Nombre { get; set; }
-        public string Precio { get; set; }
+        public int Precio { get; set; }
     }
 }
