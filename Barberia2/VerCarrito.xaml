@@ -5,6 +5,10 @@
              Title="VerCarrito">
 
     <ScrollView>
+        <StackLayout>
+        <VerticalStackLayout>
+                <Button x:Name="Total" Text=""></Button>
+            </VerticalStackLayout>
         <CollectionView ItemsSource="{Binding Listproductos}">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
@@ -25,5 +29,6 @@
             </CollectionView.ItemTemplate>
             
         </CollectionView>
+        </StackLayout>
     </ScrollView>
 </ContentPage>

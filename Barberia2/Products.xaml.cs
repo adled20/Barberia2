@@ -58,7 +58,7 @@ public partial class Products : ContentPage
         {
             var boton = sender as Button;
             int id = Convert.ToInt32(boton?.CommandParameter);
-           
+            int total;
             var client = new HttpClient();
             var json = await client.GetStringAsync($"https://barberiaapi.onrender.com/api/productos/{id}");
             var producto = JsonSerializer.Deserialize<Productos>(json);
@@ -67,8 +67,10 @@ public partial class Products : ContentPage
             {
                 var ResultadoInsert = await App.dataBase.InsertProducto(new Model.carrito
                 {
+                   
                     Nombre = producto.nombre,
-                    Precio = Convert.ToInt32(producto.precio)
+                    Precio = Convert.ToInt32(producto.precio),
+               
                 });
                 if (ResultadoInsert > 0)
                 {

@@ -37,6 +37,10 @@ namespace Barberia2.Data
         {
             return await dataBase.DeleteAsync(newUbicacion);
         }
+        public async Task<int> SumarPrecio()
+        {
+            return await dataBase.ExecuteScalarAsync<int>("SELECT SUM(Precio) FROM carrito");
+        }
     }
 }
 

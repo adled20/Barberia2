@@ -11,8 +11,8 @@
             <Label Text="Iniciar Sesión"> </Label>
             
                 <Grid ColumnDefinitions="*"   RowDefinitions="auto,auto,auto,auto" >
-                <Entry Margin="0,0,0,20"  HorizontalOptions="Center" WidthRequest="300" Placeholder="Ingrese su usuario"></Entry>
-                <Entry Margin="0,0,0,20" Grid.Row="1" IsPassword="True" WidthRequest="300" Text="" HorizontalOptions="Center" Placeholder="Ingrese su contraseña"></Entry>
+                <Entry Margin="0,0,0,20" x:Name="Correo"  HorizontalOptions="Center" WidthRequest="300" Placeholder="Ingrese su usuario"></Entry>
+                <Entry Margin="0,0,0,20" x:Name="Contraseña" Grid.Row="1" IsPassword="True" WidthRequest="300" Text="" HorizontalOptions="Center" Placeholder="Ingrese su contraseña"></Entry>
                 <Button Margin="0,0,0,20" Clicked="Ingreso" Grid.Row="2" HorizontalOptions="Center" Text="Ingresar"></Button>
                     <Button Grid.Row="3" Clicked="Navegacion" HorizontalOptions="End" Text="Crear Cuenta" Margin="0,0,15,0"></Button>
                 </Grid>

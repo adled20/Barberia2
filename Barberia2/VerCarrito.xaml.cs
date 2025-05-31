@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using Barberia2.Model;
 
+
 namespace Barberia2;
 
 public partial class VerCarrito : ContentPage
@@ -13,7 +14,7 @@ public partial class VerCarrito : ContentPage
 		InitializeComponent();
 		Listproductos = new ObservableCollection<carrito>(carritos);
 		this.BindingContext = this;
-
+        llenaTotal();
 
     }
     private async void Eliminar(object sender, EventArgs e)
@@ -28,8 +29,15 @@ public partial class VerCarrito : ContentPage
             await App.dataBase.Delete(ub);
             var itemToRemove = Listproductos.FirstOrDefault(u => u.Id == id);
             Listproductos.Remove(itemToRemove);
+            llenaTotal();
         }
 
 
+
+    }
+    private async void llenaTotal()
+    {
+        int total = await App.dataBase.SumarPrecio();
+        Total.Text = $"Total: {total}";
     }
 }
