@@ -67,6 +67,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Crear_Usuario.xaml.cs">
+	    <DependentUpon>Crear_Usuario.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Products.xaml.cs">
 	    <DependentUpon>Products.xaml</DependentUpon>
 	  </Compile>
@@ -76,7 +79,7 @@
 	  <MauiXaml Update="Cortes.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Crear Usuario.xaml">
+	  <MauiXaml Update="Crear_Usuario.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="DetalleCorte.xaml">
