@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Barberia2.agenda"
+             Title="agenda">
+    <VerticalStackLayout>
+        <ScrollView MaximumHeightRequest="400">
+
+            <VerticalStackLayout>
+                <Label Text="Ingresar barbero"></Label>
+                <HorizontalStackLayout>
+                    <Picker x:Name="pickercito"
+                     Title="Escoga a un barbero"
+                         SelectedIndexChanged="pickercito_SelectedIndexChanged"
+                         
+                         ItemDisplayBinding="{Binding nombre}">
+
+                    </Picker>
+                </HorizontalStackLayout>
+
+                <Label Text="{Binding inicio}" 
+                    Margin="0,0,0,40" 
+                    BackgroundColor="red"
+                    HeightRequest="30"></Label>
+                <CollectionView x:Name="ContactsCollection"   SelectionMode="Single">
+                    <CollectionView.ItemTemplate >
+                        <DataTemplate>
+                            <VerticalStackLayout Margin="0,0,0,30"
+                                              BackgroundColor="red">
+                                <Label Text="{Binding inicio_cita}"/>
+                                <Label Text="Ocupado hasta"></Label>
+                                <Label Text="{Binding final_cita}" />
+                            </VerticalStackLayout>
+
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+                <Label Text="{Binding final}"
+                    BackgroundColor="red"
+                     HeightRequest="30"></Label>
+
+
+            </VerticalStackLayout>
+
+        </ScrollView>
+        <Label Text="Ingrese el tiempo de su corte"></Label>
+    </VerticalStackLayout>
+
+</ContentPage>

@@ -33,5 +33,11 @@ public partial class DetalleCorte : ContentPage
         {
             await DisplayAlert("Error", ex.Message, "OK");
         }
+
+}
+
+    private async void Agendar_cita(object sender, EventArgs e)
+    {
+        await Navigation.PushAsync(new agenda());
     }
 }
