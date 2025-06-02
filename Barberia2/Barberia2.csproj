@@ -94,6 +94,9 @@
 	  <MauiXaml Update="Seleccion.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Seleccion_Barbero.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="VerCarrito.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

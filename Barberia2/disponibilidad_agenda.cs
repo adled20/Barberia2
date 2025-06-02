@@ -12,7 +12,7 @@ namespace testagenda
         [Key]
         public int idbarberos { get; set; }
         public TimeOnly? inicio_cita { get; set; } 
-        //se multiplica las horas con los minutos para obtener la posicion en 
+        //se multiplica las horas con los minutos para obtener la posicion e
 
         public TimeOnly? final_cita { get; set; } 
 

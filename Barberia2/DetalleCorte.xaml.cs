@@ -5,7 +5,8 @@ namespace Barberia2;
 
 public partial class DetalleCorte : ContentPage
 {
-	public DetalleCorte(int idCorte)
+    private int duracionEnMinutos;
+    public DetalleCorte(int idCorte)
 	{
 		InitializeComponent();
         CargarDetalle(idCorte);
@@ -24,9 +25,15 @@ public partial class DetalleCorte : ContentPage
                 precioLabel.Text = $"Valor: ${corte.costo}";
                 imagenCorte.Source = corte.imagen;
                 descripcionLabel.Text = "Descripcion: "+corte.descripcion;
-                duracionLabel.Text = "Duracion: "+corte.duracion;
+
+                TimeSpan duracionSpan = TimeSpan.Parse(corte.duracion);
+                duracionEnMinutos = (int)duracionSpan.TotalMinutes;
+                duracionLabel.Text = $"Duración: {duracionEnMinutos} min";
+
                tipoLabel.Text = "Tipo: "+corte.tipo;
 
+
+               
             }
         }
         catch (Exception ex)
@@ -34,10 +41,12 @@ public partial class DetalleCorte : ContentPage
             await DisplayAlert("Error", ex.Message, "OK");
         }
 
-}
+      
 
-    private async void Agendar_cita(object sender, EventArgs e)
-    {
-        await Navigation.PushAsync(new agenda());
+    }
+
+   private async void Agendar_cita(object sender, EventArgs e)
+{
+        await Navigation.PushAsync(new agenda(duracionEnMinutos));
     }
 }

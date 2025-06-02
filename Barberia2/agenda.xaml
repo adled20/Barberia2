@@ -2,48 +2,51 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Barberia2.agenda"
-             Title="agenda">
-    <VerticalStackLayout>
-        <ScrollView MaximumHeightRequest="400">
+             Title="Agendar Cita">
 
-            <VerticalStackLayout>
-                <Label Text="Ingresar barbero"></Label>
-                <HorizontalStackLayout>
-                    <Picker x:Name="pickercito"
-                     Title="Escoga a un barbero"
-                         SelectedIndexChanged="pickercito_SelectedIndexChanged"
-                         
-                         ItemDisplayBinding="{Binding nombre}">
-
-                    </Picker>
-                </HorizontalStackLayout>
-
-                <Label Text="{Binding inicio}" 
-                    Margin="0,0,0,40" 
-                    BackgroundColor="red"
-                    HeightRequest="30"></Label>
-                <CollectionView x:Name="ContactsCollection"   SelectionMode="Single">
-                    <CollectionView.ItemTemplate >
-                        <DataTemplate>
-                            <VerticalStackLayout Margin="0,0,0,30"
-                                              BackgroundColor="red">
-                                <Label Text="{Binding inicio_cita}"/>
-                                <Label Text="Ocupado hasta"></Label>
-                                <Label Text="{Binding final_cita}" />
-                            </VerticalStackLayout>
-
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-                <Label Text="{Binding final}"
-                    BackgroundColor="red"
-                     HeightRequest="30"></Label>
+    <VerticalStackLayout Padding="20" Spacing="15">
 
 
-            </VerticalStackLayout>
+        <Label Text="{Binding DuracionLabel}" 
+               FontSize="16" 
+               TextColor="Gray" 
+               HorizontalOptions="Center" />
 
-        </ScrollView>
-        <Label Text="Ingrese el tiempo de su corte"></Label>
+
+        <Label Text="Selecciona un barbero:" FontAttributes="Bold" />
+        <Picker x:Name="pickercito"
+                Title="Elige un barbero"
+                SelectedIndexChanged="pickercito_SelectedIndexChanged"
+                ItemDisplayBinding="{Binding nombre}" />
+
+        <Label Text="Hora de inicio:" FontAttributes="Bold" />
+        <TimePicker x:Name="timeInicio" 
+                    Format="HH:mm" 
+                    HorizontalOptions="Start" />
+
+      
+        <Label Text="Horarios ocupados:" FontAttributes="Bold" />
+        <CollectionView x:Name="ContactsCollection" 
+                        SelectionMode="Single" 
+                        HeightRequest="200">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Padding="10" BackgroundColor="#F0F0F0">
+                        <VerticalStackLayout>
+                            <Label Text="{Binding inicio_cita, StringFormat='Inicio: {0:HH:mm}'}" />
+                            <Label Text="{Binding final_cita, StringFormat='Fin: {0:HH:mm}'}" />
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Button Text="Confirmar Cita" 
+                Clicked="OnAgregarCitaClicked" 
+                BackgroundColor="#512BD4" 
+                TextColor="White" 
+                CornerRadius="20" 
+                Margin="0,20,0,0" />
+
     </VerticalStackLayout>
-
 </ContentPage>
