@@ -38,7 +38,7 @@ public partial class Cortes : ContentPage
     {
         var boton = (ImageButton)sender;  // o Button, depende del control
 
-        // Obtén el CommandParameter como string y conviértelo con TryParse para evitar excepciones
+        
         if (int.TryParse(boton.CommandParameter?.ToString(), out int idcorte))
         {
             // Navega a la página detalle pasando el id

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Barberia2.Planes"
+             Title="Planes">
+
+    <ScrollView>
+        <StackLayout Padding="10">
+            <CollectionView x:Name="planList">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame CornerRadius="10" BackgroundColor="#EEE" Padding="10" Margin="5">
+                            <StackLayout>
+                                <Label Text="{Binding nombre}" FontAttributes="Bold" FontSize="18"/>
+                                <Grid ColumnDefinitions="Auto,*,Auto" Padding="5">
+                                    <Image Source="{Binding corte.imagen}" WidthRequest="50" HeightRequest="50"/>
+                                    <StackLayout Grid.Column="1">
+                                        <Label Text="{Binding corte.nombre}" FontSize="14"/>
+                                        <Label Text="{Binding corte.tipo}" FontSize="12"/>
+                                    </StackLayout>
+                                    <Button Text="Costo: {Binding costo}" Grid.Column="2"
+                                            Clicked="VerDetalle_Clicked"/>
+                                </Grid>
+                            </StackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </StackLayout>
+    </ScrollView>
+    
+</ContentPage>
