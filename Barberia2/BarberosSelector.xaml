@@ -6,7 +6,7 @@
     <VerticalStackLayout>
         <Grid ColumnDefinitions="*,*,*">
             <Button Text="Registros" Clicked="Registrosbtn"></Button>
-            <Button Grid.Column="1" Text="Descansos" Clicked="Descansosbtn"></Button>
+           
             <Button Grid.Column="2" Text="Historial" Clicked="Historicobtn"></Button>
         </Grid>
     </VerticalStackLayout>

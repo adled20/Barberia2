@@ -1,4 +1,5 @@
 using Barberia2.Models;
+
 using System.Text;
 using System.Text.Json;
 
@@ -6,11 +7,14 @@ namespace Barberia2.Barberos_registros;
 
 public partial class Barbero_reg : ContentPage
 {
-   
+   public int IDCLIENTE;
+    public int idbar = Convert.ToInt32(Preferences.Get("user_id", "0"));
+ 
     public Barbero_reg()
 	{
 		InitializeComponent();
         string nombreBarbero = Preferences.Get("NombreBar", "Barbero");
+        
         NombreBarbero.Text = $"Bienvenido, {nombreBarbero}";
         // Asignar el BindingContext
         BindingContext = this;
@@ -30,7 +34,7 @@ public partial class Barbero_reg : ContentPage
 
         try
         {
-            // 1. Obtener todos los clientes
+          
             using var client = new HttpClient();
             var response = await client.GetAsync("https://barberiaapi.onrender.com/api/cliente");
 
@@ -39,10 +43,9 @@ public partial class Barbero_reg : ContentPage
                 var json = await response.Content.ReadAsStringAsync();
                 var clientes = JsonSerializer.Deserialize<List<Cliente>>(json);
 
-                // 2. Buscar por identificación localmente
                 var cliente = clientes?.FirstOrDefault(c =>
                     c.identificacion.Equals(identificacion, StringComparison.OrdinalIgnoreCase));
-
+                IDCLIENTE = cliente.idcliente;
                 if (cliente != null)
                 {
                     // 3. Rellenar los Entry
@@ -163,7 +166,6 @@ public partial class Barbero_reg : ContentPage
         {
            
 
-            // Determinar la URL según la selección
             string url = tipoSeleccionado == "Corte"
                 ? "https://barberiaapi.onrender.com/api/cortes"
                 : "https://barberiaapi.onrender.com/api/comboes";
@@ -192,4 +194,72 @@ public partial class Barbero_reg : ContentPage
             await DisplayAlert("Error", $"No se pudo cargar: {ex.Message}", "OK");
         }
     }
-}
+
+    private async void AñadirRegistro(object sender, EventArgs e)
+    {
+        
+        string servicioSeleccionado = ServicioPicker.SelectedItem?.ToString();
+
+        using var clientc = new HttpClient();
+        var responsec = await clientc.GetAsync("https://barberiaapi.onrender.com/api/cortes");
+
+        
+            var jsonc = await responsec.Content.ReadAsStringAsync();
+            var cortes = JsonSerializer.Deserialize<List<Models.Cortes>>(jsonc);
+
+           var corte = cortes.FirstOrDefault(c => c.nombre.Equals(servicioSeleccionado, StringComparison.OrdinalIgnoreCase));
+        
+            try
+        {
+    
+
+            var factura = new Factura
+            {
+                cliente_idcliente = IDCLIENTE,
+                barberosidbarberos = idbar,
+                fecha = DateTime.Now.Date.ToString("yyyy-MM-dd"), 
+                estado = "Activo"
+            };
+
+            using var client = new HttpClient();
+            string url = "https://barberiaapi.onrender.com/api/facturas";
+            var json = JsonSerializer.Serialize(factura);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await client.PostAsync(url, content);
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            var facturaCreada = JsonSerializer.Deserialize<Factura>(jsonResponse);
+
+            var detalle = new DetalleFactura
+            {
+                factura_idfactura = facturaCreada.idfactura,
+                corte_idcorte = corte.idcorte, 
+                estado="Activo", 
+                cantidad = 1
+            };
+
+            string urlDetalle = "https://barberiaapi.onrender.com/api/detalle_factura";
+            var jsonDetalle = JsonSerializer.Serialize(detalle);
+            await DisplayAlert("Debug", jsonDetalle, "OK");
+            var contentDetalle = new StringContent(jsonDetalle, Encoding.UTF8, "application/json");
+            var responseDetalle = await client.PostAsync(urlDetalle, contentDetalle);
+
+            if (responseDetalle.IsSuccessStatusCode)
+            {
+                await DisplayAlert("Éxito", "Factura y detalle creados correctamente", "OK");
+                Identificacion.Text = string.Empty;
+            }
+            else
+            {
+                string errorDetalle = await responseDetalle.Content.ReadAsStringAsync();
+                await DisplayAlert("Error Detalle", $"Detalle no guardado: {errorDetalle}", "OK");
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Excepción", $"Ocurrió un error: {ex.Message}", "OK");
+        }
+
+
+    }
+    }

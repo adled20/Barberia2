@@ -13,11 +13,7 @@ public partial class BarberosSelector : ContentPage
     {
         await Navigation.PushAsync(new Barberos_registros.Barbero_reg());
     }
-    private async void Descansosbtn(object sender, EventArgs e)
-    {
-        await Navigation.PushAsync(new Barberos_registros.Descansos_prog());
-
-    }
+    
     private void Historicobtn(object sender, EventArgs e)
     {
 
