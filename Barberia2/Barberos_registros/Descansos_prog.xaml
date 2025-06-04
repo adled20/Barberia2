@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Barberia2.Barberos_registros.Descansos_prog"
+             Title="Descansos_prog">
+    <VerticalStackLayout>
+        <ScrollView>
+            <Grid RowDefinitions="*,*,*,*,*">
+                <Label Text="Elija su hora de descanso">
+                </Label>
+                <Entry x:Name="Hora" Grid.Row="1" Placeholder="HoraEntry"></Entry>
+                <Label Grid.Row="2" Text="Sus citas pendientes de hoy:"></Label>
+                <Frame Grid.Row="3">
+                    <CollectionView x:Name="citasListView">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Frame Margin="10" Padding="15" HasShadow="True" BorderColor="LightGray">
+                                    <StackLayout>
+                                        <Label Text="{Binding tiempo_inicio, StringFormat='Hora inicio: {0}'}" />
+                                        <Label Text="{Binding tiempo_final, StringFormat='Hora fin: {0}'}" />
+                                        <Label Text="{Binding estado, StringFormat='Estado: {0}'}"
+                           TextColor="{Binding estado, Converter={StaticResource EstadoToColorConverter}}" />
+                                    </StackLayout>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </Frame>
+                <Button Grid.Row="4" Text="Confirmar descanso"></Button>
+            </Grid>
+        </ScrollView>
+    </VerticalStackLayout>
+</ContentPage>

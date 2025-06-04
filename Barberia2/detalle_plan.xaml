@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Barberia2.detalle_plan"
+             Title="detalle_plan">
+    <ScrollView>
+        <StackLayout Padding="20">
+            <Label Text="Corte:" FontAttributes="Bold" FontSize="20"/>
+            <Image x:Name="imgCorte" HeightRequest="120"/>
+            <Label x:Name="lblNombreCorte"/>
+            <Label x:Name="lblTipoCorte"/>
+            <Label x:Name="lblDescripcion"/>
+
+            <Label Text="Descuento:" FontAttributes="Bold"/>
+            <Label x:Name="lblDuracion"/>
+
+            <Label Text="Fecha de inicio:" FontAttributes="Bold"/>
+            <Label x:Name="lblInicio"/>
+
+            <Label Text="Fecha final:" FontAttributes="Bold"/>
+            <Label x:Name="lblFin"/>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using System.Threading.Tasks;
+using Barberia2.Barberos_registros;
 using Barberia2.Models;
 using Microsoft.Maui.ApplicationModel.Communication;
 
@@ -51,6 +52,25 @@ namespace Barberia2
                 }
                 else
                 {
+                    string urlbarberos = $"https://barberiaapi.onrender.com/api/barberos";
+                    var responsebarberos = await client.GetAsync(urlbarberos);
+                    if (responsebarberos.IsSuccessStatusCode)
+                    {
+                        var jsonBarbero = await responsebarberos.Content.ReadAsStringAsync();
+                        var barbero = JsonSerializer.Deserialize<List<Barberos>>(jsonBarbero);
+                        var BarberoValido = barbero?.FirstOrDefault(u =>
+                  u.identificacion?.Trim().Equals(email, StringComparison.OrdinalIgnoreCase) == true &&
+                  u.telefono == contraseña);
+
+                        if (BarberoValido != null)
+                        {
+                            Preferences.Set("user_id", BarberoValido.idbarberos.ToString());
+                            Preferences.Set("user_email", BarberoValido.identificacion);
+                            Preferences.Set("NombreBar", BarberoValido.primerNombre);
+                            await DisplayAlert("Exito", "Inicio de sesión", "OK");
+                            await Navigation.PushAsync(new BarberosSelector());
+                        }
+                    }
                     await DisplayAlert("Error", "Credenciales incorrectas", "OK");
                 }
             }

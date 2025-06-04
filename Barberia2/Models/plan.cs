@@ -6,17 +6,19 @@ using System.Threading.Tasks;
 
 namespace Barberia2.Models
 {
-    public class Cortes
+   public class plan
     {
-        public int idcorte { get; set; }
+        public int idPlan { get; set; }
         public string nombre { get; set; }
         public string descripcion { get; set; }
-        public string duracion { get; set; }
+        public string fecha_inicio { get; set; }
+        public string fecha_fin { get; set; }
         public string tipo { get; set; }
-        public int costo { get; set; }
-        
-        public string estado { get; set; }
-        public string imagen { get; set; }
+        public float descuento { get; set; }
+        public int corte_idcorte { get; set; }
+        public float costo { get; set; }
+
+
 
     }
 }

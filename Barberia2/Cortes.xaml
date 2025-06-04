@@ -13,7 +13,7 @@
             </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Frame Grid.Column="0" Padding="4"  Margin="10,0,10,0" WidthRequest="120" HeightRequest="120">
+                    <Frame Grid.Column="0" Padding="4"  Margin="10,0,10,0" WidthRequest="120" HeightRequest="220">
                         <Grid   RowDefinitions="*,*, *">
                             <ImageButton Aspect="AspectFill" Source="{Binding imagen}" Grid.Row="0" Clicked="DetalleCorte" CommandParameter="{Binding idcorte}"></ImageButton>
                             <Label Text="{Binding nombre}" VerticalOptions="End" Grid.Row="1"></Label>

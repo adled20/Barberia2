@@ -5,10 +5,10 @@
              Title="Seleccion">
     <VerticalStackLayout>
         <Grid ColumnDefinitions="*,*,*,*">
-        <Button Margin="10,0,10,0"  Text="Combos"></Button>
+            <Button Margin="10,0,10,0"  Clicked="Combos" Text="Combos"></Button>
             <Button Margin="0,0,10,0" Grid.Column="1" Clicked="Cortes" Text="Cortes"></Button>
             <Button Margin="0,0,10,0" Grid.Column="2" Clicked="Productos" Text="Productos"></Button>
-            <Button Margin="0,0,10,0" Grid.Column="3" Text="Planes"></Button>
+            <Button Margin="0,0,10,0" Grid.Column="3" Clicked="Planes" Text="Planes"></Button>
         </Grid>
     </VerticalStackLayout>
 </ContentPage>
