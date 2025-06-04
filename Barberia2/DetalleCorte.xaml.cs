@@ -6,9 +6,13 @@ namespace Barberia2;
 public partial class DetalleCorte : ContentPage
 {
     private int duracionEnMinutos;
+    private int idCorte;
+    private int usuarioId;
     public DetalleCorte(int idCorte)
 	{
 		InitializeComponent();
+        this.idCorte = idCorte;
+        this.usuarioId = usuarioId;
         CargarDetalle(idCorte);
     }
     private async void CargarDetalle(int id)
@@ -24,29 +28,30 @@ public partial class DetalleCorte : ContentPage
                 nombreLabel.Text = corte.nombre;
                 precioLabel.Text = $"Valor: ${corte.costo}";
                 imagenCorte.Source = corte.imagen;
-                descripcionLabel.Text = "Descripcion: "+corte.descripcion;
+                descripcionLabel.Text = "Descripcion: " + corte.descripcion;
 
                 TimeSpan duracionSpan = TimeSpan.Parse(corte.duracion);
                 duracionEnMinutos = (int)duracionSpan.TotalMinutes;
                 duracionLabel.Text = $"Duración: {duracionEnMinutos} min";
 
-               tipoLabel.Text = "Tipo: "+corte.tipo;
-
-
-               
+                tipoLabel.Text = "Tipo: " + corte.tipo;
             }
         }
         catch (Exception ex)
         {
             await DisplayAlert("Error", ex.Message, "OK");
         }
-
-      
-
     }
 
-   private async void Agendar_cita(object sender, EventArgs e)
-{
-        await Navigation.PushAsync(new agenda(duracionEnMinutos));
+    private async void Agendar_cita(object sender, EventArgs e)
+    {
+        // Pasamos duración, comboId = 0, corteId real, planId = 0, usuarioId real
+        await Navigation.PushAsync(new agenda(
+            duracionCorte: duracionEnMinutos,
+            comboId: 0,
+            corteId: idCorte,
+            planId: 0,
+            usuarioId: usuarioId
+        ));
     }
 }
