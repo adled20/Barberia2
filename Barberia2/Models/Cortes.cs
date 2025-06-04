@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Barberia2.Models
 {
-    class Cortes
+    public class Cortes
     {
         public int idcorte { get; set; }
         public string nombre { get; set; }

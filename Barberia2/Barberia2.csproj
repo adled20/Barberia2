@@ -92,6 +92,9 @@
 	  <MauiXaml Update="DetalleCorte.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="detalle_combo.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="detalle_plan.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

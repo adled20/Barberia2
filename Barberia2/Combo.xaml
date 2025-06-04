@@ -3,8 +3,34 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Barberia2.Combo"
              Title="Combo">
-    <VerticalStackLayout>
-         
-            
-    </VerticalStackLayout>
+    <ScrollView>
+        <CollectionView x:Name="ComboCollectionView">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame BackgroundColor="LightGray" Margin="10" Padding="10" CornerRadius="12">
+                        <StackLayout>
+                            <Label Text="{Binding NombreCombo}" FontAttributes="Bold" FontSize="18" />
+                            <Label Text="{Binding Costo, StringFormat='Precio: ${0:F2}'}" />
+                            <Label Text="{Binding Duracion, StringFormat='Duración: {0}'}" />
+                            <Label Text="{Binding TipoCombo}" />
+
+                            <CollectionView ItemsSource="{Binding Cortes}" ItemsLayout="HorizontalList">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackLayout WidthRequest="100" Margin="5">
+                                            <ImageButton Source="{Binding imagen}" HeightRequest="70"
+                                                         Clicked="OnCorteImageClicked"
+                                                         BindingContext="{Binding .}" />
+                                            <Label Text="{Binding nombre}" FontSize="12" HorizontalTextAlignment="Center" />
+                                            <Label Text="{Binding tipo}" FontSize="10" HorizontalTextAlignment="Center" />
+                                        </StackLayout>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </StackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </ScrollView>
 </ContentPage>

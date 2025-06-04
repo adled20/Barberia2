@@ -20,4 +20,9 @@ public partial class Seleccion : ContentPage
     {
         await Navigation.PushAsync(new Planes());
     }
+
+    private async void Combos(object sender, EventArgs e)
+    {
+        await Navigation.PushAsync(new Combo());
+    }
 }
