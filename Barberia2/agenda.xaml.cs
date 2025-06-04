@@ -1,5 +1,9 @@
 
 using System.Collections.ObjectModel;
+using System.Net.Http;
+using System.Text;
+using Barberia2.Models;
+using Newtonsoft.Json;
 using testagenda;
 
 namespace Barberia2;
@@ -7,6 +11,10 @@ namespace Barberia2;
 public partial class agenda : ContentPage
 {
     private int _duracionCorte;
+    private int _comboId;
+    private int _corteId;
+    private int _planId;
+    private int _usuarioId;
 
 
     ObservableCollection<disponibilidad_agenda> items_mostrar { get; set; }
@@ -14,128 +22,159 @@ public partial class agenda : ContentPage
     public TimeOnly? inicio { get; set; }
     public TimeOnly? final { get; set; }
 
-    public agenda(int duracionCorte)
-	{
+    private async Task CargarAgendasDesdeAPI()
+    {
+        try
+        {
+            using HttpClient client = new();
+            string url = "https://barberiaapi.onrender.com/api/agenda";
+            var response = await client.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var agendas = JsonConvert.DeserializeObject<List<disponibilidad_agenda>>(json);
+
+                items_mostrar = new ObservableCollection<disponibilidad_agenda>(agendas);
+            }
+            else
+            {
+                await DisplayAlert("Error", "No se pudieron obtener las agendas", "OK");
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", $"Fallo al cargar agendas: {ex.Message}", "OK");
+        }
+    }
+    private async Task CargarBarberosDesdeAPI()
+    {
+        try
+        {
+            using HttpClient client = new();
+            string url = "https://barberiaapi.onrender.com/api/barberos";
+            var response = await client.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var barberos = JsonConvert.DeserializeObject<List<Barberos>>(json);
+
+                if (barberos != null)
+                {
+                    pickercito.ItemsSource = barberos;
+                    pickercito.ItemDisplayBinding = new Binding("apodo"); // o "primerNombre" si prefieres
+                }
+            }
+            else
+            {
+                await DisplayAlert("Error", "No se pudieron cargar los barberos", "OK");
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", $"Fallo al cargar barberos: {ex.Message}", "OK");
+        }
+    }
+
+    private async Task<bool> VerificarDisponibilidadBarbero(int idBarbero, TimeOnly inicio, TimeOnly fin, DateTime dia)
+    {
+        try
+        {
+            using HttpClient client = new();
+            var disponibilidad = new VerificarDisponibilidad
+            {
+                idbarberos = idBarbero,
+                tiempo_inicio = inicio,
+                tiempo_final = fin,
+                dia = dia
+            };
+
+            var json = JsonConvert.SerializeObject(disponibilidad);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await client.PostAsync("https://barberiaapi.onrender.com/api/agenda/barbero_disponible", content);
+            if (!response.IsSuccessStatusCode)
+                return false;
+
+            var respuestaJson = await response.Content.ReadAsStringAsync();
+            return bool.TryParse(respuestaJson, out bool disponible) && disponible;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error verificando disponibilidad: {ex.Message}");
+            return false;
+        }
+    }
+    public agenda(int duracionCorte, int comboId = 0, int corteId = 0, int planId = 0, int usuarioId = 0)
+    {
+
         _duracionCorte = duracionCorte;
-
-        ObservableCollection<disponibilidad_agenda> items_api = new ObservableCollection<disponibilidad_agenda>(){new disponibilidad_agenda()
-            {
-                idbarberos = 1,
-                inicio_cita = null,
-                final_cita = null,
-                hora_entrada = new TimeOnly(08, 00, 00),
-                hora_salida = new TimeOnly(18, 00, 00)
-            }, new disponibilidad_agenda()
-            {
-                idbarberos = 1,
-                inicio_cita = new TimeOnly(13,00,00),
-                final_cita = new TimeOnly(14, 00, 00),
-                hora_entrada = new TimeOnly(08, 00, 00),
-                hora_salida = new TimeOnly(18, 00, 00)
-            },new disponibilidad_agenda()
-            {
-                idbarberos = 2,
-                inicio_cita = new TimeOnly(15,30,00),
-                final_cita = new TimeOnly(16, 40, 00),
-                hora_entrada = new TimeOnly(08, 00, 00),
-                hora_salida = new TimeOnly(18, 00, 00)
-            }};
-
-        List<mostar_barbero?> lista_barberos_api = new List<mostar_barbero?>(){new mostar_barbero()
-            {
-                idbarberos = 1,
-                nombre = "Javier doria al cuadrado",
-                fotobarbero = "fachero",
-                apodo = "el mascapito"
-
-            }, new mostar_barbero()
-            {
-                idbarberos = 2,
-                nombre = "Emmanuel Ramos",
-                fotobarbero = "fotito",
-                apodo = "emma"
-            },new mostar_barbero()
-            {
-                idbarberos = 3,
-                nombre = "Goku ",
-                fotobarbero = "gokusito",
-                apodo = "el sayayin"
-            }};
-
-        inicio = items_api.FirstOrDefault().hora_entrada;
-        final = items_api.FirstOrDefault().hora_salida;
-        items_mostrar = items_api;
-        mostar_barberos = new List<mostar_barbero?>();
-        mostar_barberos = lista_barberos_api;
-
+        _comboId = comboId;
+        _corteId = corteId;
+        _planId = planId;
+        _usuarioId = usuarioId;
 
         InitializeComponent();
         this.BindingContext = this;
         pickercito.ItemsSource = mostar_barberos;
+        CargarBarberosDesdeAPI();
+        CargarAgendasDesdeAPI();
     }
     private void pickercito_SelectedIndexChanged(object sender, EventArgs e)
     {
-        mostar_barbero id_selecionada = (mostar_barbero)pickercito.SelectedItem;
-        ContactsCollection.ItemsSource = items_mostrar.Where(x => x.inicio_cita != null && x.idbarberos == id_selecionada.idbarberos);
+        var id_seleccionado = (Barberos)pickercito.SelectedItem;
+        ContactsCollection.ItemsSource = items_mostrar
+            .Where(x => x.inicio_cita != null && x.idbarberos == id_seleccionado.idbarberos)
+            .OrderBy(x => x.inicio_cita);
     }
-    private void OnAgregarCitaClicked(object sender, EventArgs e)
+
+    private async void OnAgregarCitaClicked(object sender, EventArgs e)
     {
         try
         {
-            // 1. Validar barbero seleccionado
             if (pickercito.SelectedItem == null)
             {
-                DisplayAlert("Error", "Debes seleccionar un barbero", "OK");
+                await DisplayAlert("Error", "Debes seleccionar un barbero", "OK");
                 return;
             }
 
-            // 2. Validar y obtener hora de inicio (manejo seguro)
             if (timeInicio == null || timeInicio.Time.TotalMilliseconds == 0)
             {
-                DisplayAlert("Error", "Selecciona una hora válida", "OK");
+                await DisplayAlert("Error", "Selecciona una hora válida", "OK");
                 return;
             }
 
-            // 3. Conversión segura a TimeOnly
             var timeSpan = timeInicio.Time;
             TimeOnly inicioCita;
-
             try
             {
                 inicioCita = new TimeOnly(timeSpan.Hours, timeSpan.Minutes, timeSpan.Seconds);
             }
-            catch (ArgumentOutOfRangeException)
+            catch
             {
-                DisplayAlert("Error", "La hora seleccionada no es válida", "OK");
+                await DisplayAlert("Error", "La hora seleccionada no es válida", "OK");
                 return;
             }
 
-            // 4. Calcular hora final
             TimeOnly finCita = inicioCita.AddMinutes(_duracionCorte);
 
-            // 5. Validar horario laboral
             var primerItem = items_mostrar.FirstOrDefault();
             if (primerItem == null || inicioCita < primerItem.hora_entrada || finCita > primerItem.hora_salida)
             {
-                DisplayAlert("Error", $"Horario no disponible. Trabaja de {primerItem?.hora_entrada:HH:mm} a {primerItem?.hora_salida:HH:mm}", "OK");
+                await DisplayAlert("Error", $"Horario no disponible. Trabaja de {primerItem?.hora_entrada:HH:mm} a {primerItem?.hora_salida:HH:mm}", "OK");
                 return;
             }
 
-            // 6. Validar solapamiento
             var barberoSeleccionado = (mostar_barbero)pickercito.SelectedItem;
-            bool conflicto = items_mostrar.Any(c =>
-                c.idbarberos == barberoSeleccionado.idbarberos &&
-                c.inicio_cita != null &&
-                ((inicioCita >= c.inicio_cita && inicioCita < c.final_cita) ||
-                 (finCita > c.inicio_cita && finCita <= c.final_cita)));
+            bool estaDisponible = await VerificarDisponibilidadBarbero(barberoSeleccionado.idbarberos, inicioCita, finCita, DateTime.Today);
 
-            if (conflicto)
+            if (!estaDisponible)
             {
-                DisplayAlert("Error", "El barbero ya tiene una cita en ese horario", "OK");
+                await DisplayAlert("No disponible", "El barbero no está disponible en ese horario", "OK");
                 return;
             }
 
-            // 7. Agregar cita
             items_mostrar.Add(new disponibilidad_agenda
             {
                 idbarberos = barberoSeleccionado.idbarberos,
@@ -145,24 +184,56 @@ public partial class agenda : ContentPage
                 hora_salida = primerItem.hora_salida
             });
 
-            // 8. Actualizar UI
             ContactsCollection.ItemsSource = items_mostrar
                 .Where(x => x.inicio_cita != null && x.idbarberos == barberoSeleccionado.idbarberos)
                 .OrderBy(x => x.inicio_cita);
 
-            DisplayAlert("Éxito",
-                $"Cita agendada:\n" +
-                $"• Barbero: {barberoSeleccionado.nombre}\n" +
-                $"• Horario: {inicioCita:HH:mm} - {finCita:HH:mm}\n" +
-                $"• Duración: {_duracionCorte} minutos",
-                "OK");
+            // Crear cita para API
+            var nuevaCita = new Agendas
+            {
+                usuarios_idusuarios = _usuarioId,
+                combo_idcombo = _comboId,
+                corte_idcorte = _corteId,
+                Plan_idPlan = _planId,
+                tiempo_inicio = inicioCita,
+                tiempo_final = finCita,
+                dia = DateTime.Today
+            };
+
+            bool resultado = await EnviarCitaAPI(nuevaCita);
+
+            if (resultado)
+            {
+                await DisplayAlert("Cita registrada", $"Tu cita fue registrada correctamente", "OK");
+            }
+            else
+            {
+                await DisplayAlert("Error", "No se pudo registrar la cita en la base de datos", "OK");
+            }
         }
         catch (Exception ex)
         {
-            DisplayAlert("Error", $"Error inesperado: {ex.Message}", "OK");
-#if DEBUG
+            await DisplayAlert("Error", $"Error inesperado: {ex.Message}", "OK");
             Console.WriteLine($"ERROR: {ex}");
-#endif
         }
     }
+
+    private async Task<bool> EnviarCitaAPI(Agendas nuevaCita)
+    {
+        try
+        {
+            using HttpClient client = new();
+            var json = JsonConvert.SerializeObject(nuevaCita);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await client.PostAsync("https://barberiaapi.onrender.com/api/agenda", content);
+            return response.IsSuccessStatusCode;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al enviar la cita: {ex.Message}");
+            return false;
+        }
+    }
+
 }
