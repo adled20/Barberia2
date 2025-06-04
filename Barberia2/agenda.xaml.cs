@@ -22,6 +22,90 @@ public partial class agenda : ContentPage
     public TimeOnly? inicio { get; set; }
     public TimeOnly? final { get; set; }
 
+    private async Task CargarAgendasDesdeAPI()
+    {
+        try
+        {
+            using HttpClient client = new();
+            string url = "https://barberiaapi.onrender.com/api/agenda";
+            var response = await client.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var agendas = JsonConvert.DeserializeObject<List<disponibilidad_agenda>>(json);
+
+                items_mostrar = new ObservableCollection<disponibilidad_agenda>(agendas);
+            }
+            else
+            {
+                await DisplayAlert("Error", "No se pudieron obtener las agendas", "OK");
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", $"Fallo al cargar agendas: {ex.Message}", "OK");
+        }
+    }
+    private async Task CargarBarberosDesdeAPI()
+    {
+        try
+        {
+            using HttpClient client = new();
+            string url = "https://barberiaapi.onrender.com/api/barberos";
+            var response = await client.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var barberos = JsonConvert.DeserializeObject<List<Barberos>>(json);
+
+                if (barberos != null)
+                {
+                    pickercito.ItemsSource = barberos;
+                    pickercito.ItemDisplayBinding = new Binding("apodo"); // o "primerNombre" si prefieres
+                }
+            }
+            else
+            {
+                await DisplayAlert("Error", "No se pudieron cargar los barberos", "OK");
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", $"Fallo al cargar barberos: {ex.Message}", "OK");
+        }
+    }
+
+    private async Task<bool> VerificarDisponibilidadBarbero(int idBarbero, TimeOnly inicio, TimeOnly fin, DateTime dia)
+    {
+        try
+        {
+            using HttpClient client = new();
+            var disponibilidad = new VerificarDisponibilidad
+            {
+                idbarberos = idBarbero,
+                tiempo_inicio = inicio,
+                tiempo_final = fin,
+                dia = dia
+            };
+
+            var json = JsonConvert.SerializeObject(disponibilidad);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await client.PostAsync("https://barberiaapi.onrender.com/api/agenda/barbero_disponible", content);
+            if (!response.IsSuccessStatusCode)
+                return false;
+
+            var respuestaJson = await response.Content.ReadAsStringAsync();
+            return bool.TryParse(respuestaJson, out bool disponible) && disponible;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error verificando disponibilidad: {ex.Message}");
+            return false;
+        }
+    }
     public agenda(int duracionCorte, int comboId = 0, int corteId = 0, int planId = 0, int usuarioId = 0)
     {
 
@@ -34,12 +118,15 @@ public partial class agenda : ContentPage
         InitializeComponent();
         this.BindingContext = this;
         pickercito.ItemsSource = mostar_barberos;
+        CargarBarberosDesdeAPI();
+        CargarAgendasDesdeAPI();
     }
     private void pickercito_SelectedIndexChanged(object sender, EventArgs e)
     {
-        mostar_barbero id_seleccionada = (mostar_barbero)pickercito.SelectedItem;
+        var id_seleccionado = (Barberos)pickercito.SelectedItem;
         ContactsCollection.ItemsSource = items_mostrar
-            .Where(x => x.inicio_cita != null && x.idbarberos == id_seleccionada.idbarberos);
+            .Where(x => x.inicio_cita != null && x.idbarberos == id_seleccionado.idbarberos)
+            .OrderBy(x => x.inicio_cita);
     }
 
     private async void OnAgregarCitaClicked(object sender, EventArgs e)
@@ -80,16 +167,11 @@ public partial class agenda : ContentPage
             }
 
             var barberoSeleccionado = (mostar_barbero)pickercito.SelectedItem;
+            bool estaDisponible = await VerificarDisponibilidadBarbero(barberoSeleccionado.idbarberos, inicioCita, finCita, DateTime.Today);
 
-            bool conflicto = items_mostrar.Any(c =>
-                c.idbarberos == barberoSeleccionado.idbarberos &&
-                c.inicio_cita != null &&
-                ((inicioCita >= c.inicio_cita && inicioCita < c.final_cita) ||
-                 (finCita > c.inicio_cita && finCita <= c.final_cita)));
-
-            if (conflicto)
+            if (!estaDisponible)
             {
-                await DisplayAlert("Error", "El barbero ya tiene una cita en ese horario", "OK");
+                await DisplayAlert("No disponible", "El barbero no está disponible en ese horario", "OK");
                 return;
             }
 

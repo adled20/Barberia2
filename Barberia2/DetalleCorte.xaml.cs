@@ -12,7 +12,12 @@ public partial class DetalleCorte : ContentPage
 	{
 		InitializeComponent();
         this.idCorte = idCorte;
-        this.usuarioId = usuarioId;
+        usuarioId = int.Parse(Preferences.Get("user_id", "0"));
+
+        if (usuarioId == 0)
+        {
+            DisplayAlert("Error", "No se ha encontrado el ID del usuario", "OK");
+        }
         CargarDetalle(idCorte);
     }
     private async void CargarDetalle(int id)
